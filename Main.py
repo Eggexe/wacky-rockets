@@ -1,6 +1,6 @@
 import pygame
 import sys
-from RocketClass import Rocket
+from RocketClass import RocketClass
 from PhysicsEngine import PhysicsEngine
 
 #basic instantiation
@@ -20,7 +20,7 @@ GAME = "game"
 state = MENU
 
 # making objects, NTPF and Fl2 used as testing fuels for proof of concept
-rocket = Rocket("NTPF", "Flourine")
+rocket = RocketClass("NTPF", "Flourine")
 physics = PhysicsEngine()
 
 # button variables for instantiating later
@@ -46,6 +46,7 @@ while running:
     # MENU code for running the menu
     if state == MENU:
         # init buttons "start" + "quit"
+        
         pygame.draw.rect(screen, (60, 120, 200), start_btn)
         pygame.draw.rect(screen, (200, 60, 60), quit_btn)
 
@@ -54,6 +55,8 @@ while running:
         screen.blit(font.render("WACKY ROCKETS", True, (255, 255, 255)), (280, 150))
 
     # game code here
+    pygame.display.flip()
+    print(state)
     
 
     
