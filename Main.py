@@ -13,6 +13,7 @@ pygame.display.set_caption("Wacky Rockets")
 clock = pygame.time.Clock()
 font = pygame.font.Font(None, 36)
 
+
 # game states - prevents weird logic from occuring
 # e.g. game running while in a menu
 MENU = "menu"
@@ -23,6 +24,14 @@ state = MENU
 rocket = RocketClass("NTPF", "Flourine")
 physics = PhysicsEngine()
 
+
+# code added here to keep a list of the names, values and indexes of the fuel
+# and oxidiser lists in RocketClass.py, needed to cleanly switch them properly
+fuel_list = list(RocketClass.r_Fuels.keys())
+oxidiser_list = list(RocketClass.r_Oxidiser.keys())
+fuel_index = fuel_list.index(rocket.fuel1)
+oxidiser_index = oxidiser_list.index(rocket.oxidiser1)
+
 # button variables for instantiating later
 start_btn = pygame.Rect(300, 250, 200, 50)
 quit_btn = pygame.Rect(300, 320, 200, 50)
@@ -31,7 +40,25 @@ running = True
 while running:
     dt = clock.tick(60) / 1000
 
+    ######################## FUEL CHANGE HERE #####################
+
     for event in pygame.event.get():
+        if event.type == pygame.KEYDOWN and state == GAME:
+        # fuel change L press
+            if event.key == pygame.K_l:
+                fuel_index = (fuel_index + 1) % len(fuel_list) # % prevents crash
+                rocket.set_fuel(fuel_list[fuel_index])
+
+            # oxidiser change K press
+            if event.key == pygame.K_k:
+                oxidiser_index = (oxidiser_index + 1) % len(oxidiser_list) # ^^^
+                rocket.set_oxidiser(oxidiser_list[oxidiser_index])
+        print(oxidiser_index)
+        print(rocket.fuel1)
+        print(rocket.oxidiser1)
+
+    ###################### QUIT THE GAME HERE ##############################
+        
         if event.type == pygame.QUIT:
             running = False
 
@@ -43,6 +70,8 @@ while running:
 
     screen.fill((20, 20, 30))
 
+    ################## MENU AND GAME CODE HERE #########################
+ 
     # MENU code for running the menu
     if state == MENU:
         # init buttons "start" + "quit"
@@ -55,9 +84,46 @@ while running:
         screen.blit(font.render("WACKY ROCKETS", True, (255, 255, 255)), (280, 150))
 
     # game code here
-    pygame.display.flip()
-    print(state)
+
+    #establish text variables again, same with the START and QUIT buttons
+    # except it should display data from the RocketClass
+    if state == GAME:
+        fuel_text = font.render(f"Fuel: {rocket.fuel1}", True, (255,255,255))
+        oxidiser_test = font.render(f"Oxidiser: {rocket.oxidiser1}", True, (255,255,255))
+
+        
+
+        # send to screen and display from the width of the screen to a corner
+        screen.blit(fuel_text, (WIDTH- fuel_text.get_width() - 20,20))
+        screen.blit(oxidiser_test, (WIDTH- oxidiser_test.get_width() - 20,55))
+
+
+    ############## LEVEL DRAWING PARTS ##############################
     
+    #draw the gound
+    pygame.draw.rect(screen, (50, 200, 50), (0, HEIGHT-50,WIDTH,50)) # green
+
+    #draw landing pad
+    landing_pad_rect = pygame.Rect(WIDTH // 3, HEIGHT - 60, 100, 10)
+    pygame.draw.rect(screen, (200,200,200), landing_pad_rect)
+
+    #draw trees randomly
+    tree_pos = [100, 250, 400, 550, 700]
+    for i in tree_pos:
+        #the trunk
+        pygame.draw.rect(screen, (100,50,0), (i, HEIGHT-80,20,30))
+        #draw a fancy polygon for the leaf
+        pygame.draw.polygon(screen, (0, 150, 0), [(i -15, HEIGHT -80), (i +35, HEIGHT -80),(i +10, HEIGHT -120)])
+
+
+    #draw rocket position
+    rocket_x = WIDTH //2
+    rocket_y = HEIGHT -100
+    pygame.draw.rect(screen, (200,50,50), (rocket_x -10, rocket_y -30, 20, 30))
+        
+    
+    
+    pygame.display.flip()
 
     
 pygame.quit()

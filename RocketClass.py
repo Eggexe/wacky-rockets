@@ -46,4 +46,23 @@ class RocketClass:
         # rocket stats
         self.mass = 1000
         self.velocity = 0
+
+    
+    # METHODS FOR FUEL SWITCHING
+    # SETTING FUEL AND OXIDISER
+    # UPDATING THE FUEL CHANGE
+    def set_fuel(self, new_fuel):
+        if new_fuel in self.r_Fuels:
+            self.fuel1 = new_fuel
+            self.recalculate_efficiency()
+
+    def set_oxidiser(self, new_oxidiser):
+        if new_oxidiser in self.r_Oxidiser:
+            self.oxidiser1 = new_oxidiser
+            self.recalculate_efficiency()
+
+    def recalculate_efficiency(self):
+        f_eff = self.r_Fuels[self.fuel1]
+        o_eff = self.r_Oxidiser[self.oxidiser1]
+        self.fuelEfficiency = self.physics.calculate_fuelEfficiency(f_eff, o_eff)
         
