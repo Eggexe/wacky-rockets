@@ -24,6 +24,9 @@ state = MENU
 rocket = RocketClass("NTPF", "Flourine")
 physics = PhysicsEngine()
 
+rocket.y = HEIGHT - 60 # force rocket to be on landing pad
+rocket.v_velocity = 0
+
 
 # code added here to keep a list of the names, values and indexes of the fuel
 # and oxidiser lists in RocketClass.py, needed to cleanly switch them properly
@@ -129,10 +132,36 @@ while running:
             pygame.draw.polygon(screen, (0, 150, 0), [(i -15, HEIGHT -80), (i +35, HEIGHT -80),(i +10, HEIGHT -120)])
 
 
-        #draw rocket position
-        rocket_x = WIDTH //2
-        rocket_y = HEIGHT - 60
-        pygame.draw.rect(screen, (200,50,50), (rocket_x -10, rocket_y -30, 20, 30))
+        if rocket.alive:
+            # gravity always applies
+            rocket.vertical_velocity = physics.apply_gravity(rocket.vertical_velocity, dt)
+
+            # thrust when holding SPACE
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_SPACE]:
+                rocket.vertical_velocity = physics.apply_thrust(rocket.vertical_velocity, thrust_power=20, fuel_efficiency=rocket.fuelEfficiency, dt=dt)
+
+            # update position
+            rocket.y -= rocket.vertical_velocity
+
+
+        # ground collision
+        ground_y = HEIGHT - 60
+
+        if rocket.y >= ground_y:
+            rocket.y = ground_y
+
+            # landing check
+            if abs(rocket.vertical_velocity) <= 6: # abs to ensure 100% accuracy
+                rocket.vertical_velocity = 0
+            else:
+                rocket.alive = False # rocket will die in this case, game loss
+
+        # check if the rocket is alive and then draw it, rather than redrawing it over and over
+        if rocket.alive:
+            rocket_x = WIDTH // 2
+            pygame.draw.rect(screen,(200, 50, 50),(rocket_x - 10, rocket.y - 30, 20, 30))
+
             
         
         

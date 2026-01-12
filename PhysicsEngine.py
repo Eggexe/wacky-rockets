@@ -13,7 +13,7 @@ class PhysicsEngine:
     e_tickrate = 60 # 60 fps baseline
 
 
-    # METHODS
+    # GENERIC METHODS
 
     def get_thrust(self):
         return self.e_rocketSpeed
@@ -21,14 +21,23 @@ class PhysicsEngine:
     def set_gravity(self, gravity):
         self.e_gravityConstant = gravity
 
-    def apply_thrust(self,thrustPower, fuelEfficiency, fuelRemaining):
-        effectiveThrust = thrustPower * fuelEfficiency
-        self.e_rocketVelocity += effectiveThrust / self.e_rocketMass
-        return self.e_rocketVelocity
-
     def calculate_fuelEfficiency(self, fuel1_eff, oxidiser_eff):
         fuelMix = fuel1_eff * oxidiser_eff
         final = max(0, min(fuelMix,1))
         return final
+
+
+    # ROCKET MOVING METHODS
+    def apply_gravity(self, velocity, dt):
+        #gravity always should pull down
+        #dt = delta time, personal note
+        velocity -= self.e_gravityConstant * dt
+        return velocity
+
+    def apply_thrust(self, velocity, thrust_power, fuel_efficiency, dt):
+        #thrust makes rocket go up
+        thrust = thrust_power * fuel_efficiency
+        velocity += thrust * dt
+        return velocity
 
     

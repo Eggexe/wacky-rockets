@@ -1,4 +1,4 @@
-rimport os
+import os
 from PhysicsEngine import PhysicsEngine
 
 class RocketClass:
@@ -46,6 +46,11 @@ class RocketClass:
         # rocket stats
         self.mass = 1000
         self.velocity = 0
+        self.y = 0
+        self.v_velocity = 0
+
+        # rocket state
+        self.alive = True # has rocket crashed or not?
 
     
     # METHODS FOR FUEL SWITCHING
