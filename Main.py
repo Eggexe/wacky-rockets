@@ -84,6 +84,10 @@ while running:
         screen.blit(font.render("WACKY ROCKETS", True, (255, 255, 255)), (280, 150))
 
     # game code here
+    if state == GAME:
+        if event.key == pygame.K_space:
+            rocket.velocity = 100 * mass * physics.final
+    
 
     #establish text variables again, same with the START and QUIT buttons
     # except it should display data from the RocketClass

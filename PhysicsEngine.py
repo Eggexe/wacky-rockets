@@ -28,7 +28,7 @@ class PhysicsEngine:
 
     def calculate_fuelEfficiency(self, fuel1_eff, oxidiser_eff):
         fuelMix = fuel1_eff * oxidiser_eff
-        final = math.clamp(fuelMix, 0, 1)
+        final = max(0, min(fuelMix,1))
         return final
 
     
