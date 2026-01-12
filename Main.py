@@ -56,6 +56,14 @@ while running:
         print(oxidiser_index)
         print(rocket.fuel1)
         print(rocket.oxidiser1)
+        print(rocket.r_Fuels[fuel_list[fuel_index]])
+        
+
+    ###################### GAME CODE HEERE ###############################
+        
+        if state == GAME and event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                rocket.velocity = 100 * rocket.mass * physics.calculate_fuelEfficiency(rocket.r_Fuels[fuel_list[fuel_index]],rocket.r_Oxidiser[oxidiser_list[oxidiser_index]])
 
     ###################### QUIT THE GAME HERE ##############################
         
@@ -70,7 +78,9 @@ while running:
 
     screen.fill((20, 20, 30))
 
-    ################## MENU AND GAME CODE HERE #########################
+    ################## MENU CODE HERE #########################
+         
+
  
     # MENU code for running the menu
     if state == MENU:
@@ -83,10 +93,7 @@ while running:
         screen.blit(font.render("QUIT", True, (255, 255, 255)), (370, 335))
         screen.blit(font.render("WACKY ROCKETS", True, (255, 255, 255)), (280, 150))
 
-    # game code here
-    if state == GAME:
-        if event.key == pygame.K_space:
-            rocket.velocity = 100 * mass * physics.final
+   
     
 
     #establish text variables again, same with the START and QUIT buttons
@@ -134,3 +141,5 @@ while running:
     
 pygame.quit()
 sys.exit()
+
+
