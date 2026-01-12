@@ -99,30 +99,32 @@ while running:
 
 
     ############## LEVEL DRAWING PARTS ##############################
-    
-    #draw the gound
-    pygame.draw.rect(screen, (50, 200, 50), (0, HEIGHT-50,WIDTH,50)) # green
 
-    #draw landing pad
-    landing_pad_rect = pygame.Rect(WIDTH // 3, HEIGHT - 60, 100, 10)
-    pygame.draw.rect(screen, (200,200,200), landing_pad_rect)
+    if state == GAME: # check for game state BEFORE loading level
+            
+        #draw the gound
+        pygame.draw.rect(screen, (50, 200, 50), (0, HEIGHT-50,WIDTH,50)) # green
 
-    #draw trees randomly
-    tree_pos = [100, 250, 400, 550, 700]
-    for i in tree_pos:
-        #the trunk
-        pygame.draw.rect(screen, (100,50,0), (i, HEIGHT-80,20,30))
-        #draw a fancy polygon for the leaf
-        pygame.draw.polygon(screen, (0, 150, 0), [(i -15, HEIGHT -80), (i +35, HEIGHT -80),(i +10, HEIGHT -120)])
+        #draw landing pad
+        landing_pad_rect = pygame.Rect(WIDTH // 2 - 50, HEIGHT - 60, 100, 10)
+        pygame.draw.rect(screen, (200,200,200), landing_pad_rect)
+
+        #draw trees randomly
+        tree_pos = [100, 250, 550, 700]
+        for i in tree_pos:
+            #the trunk
+            pygame.draw.rect(screen, (100,50,0), (i, HEIGHT-80,20,30))
+            #draw a fancy polygon for the leaf
+            pygame.draw.polygon(screen, (0, 150, 0), [(i -15, HEIGHT -80), (i +35, HEIGHT -80),(i +10, HEIGHT -120)])
 
 
-    #draw rocket position
-    rocket_x = WIDTH //2
-    rocket_y = HEIGHT -100
-    pygame.draw.rect(screen, (200,50,50), (rocket_x -10, rocket_y -30, 20, 30))
+        #draw rocket position
+        rocket_x = WIDTH //2
+        rocket_y = HEIGHT - 60
+        pygame.draw.rect(screen, (200,50,50), (rocket_x -10, rocket_y -30, 20, 30))
+            
         
-    
-    
+        
     pygame.display.flip()
 
     

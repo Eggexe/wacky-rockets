@@ -1,3 +1,5 @@
+import math
+
 class PhysicsEngine:
     """Earth variables"""
     e_gravityConstant = 9.8
@@ -26,7 +28,7 @@ class PhysicsEngine:
 
     def calculate_fuelEfficiency(self, fuel1_eff, oxidiser_eff):
         fuelMix = fuel1_eff * oxidiser_eff
-        final = max(0, min(fuelMix,1))
+        final = math.clamp(fuelMix, 0, 1)
         return final
 
     
