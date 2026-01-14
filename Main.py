@@ -59,17 +59,17 @@ while running:
         print(oxidiser_index)
         print(rocket.fuel1)
         print(rocket.oxidiser1)
-        print(rocket.r_Fuels[fuel_list[fuel_index]])
-        
+        print(physics.calculate_fuelEfficiency(rocket.r_Fuels[fuel_list[fuel_index]],rocket.r_Oxidiser[oxidiser_list[oxidiser_index]]))
+
 
     ###################### GAME CODE HEERE ###############################
-        
+
         if state == GAME and event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
                 rocket.velocity = 100 * rocket.mass * physics.calculate_fuelEfficiency(rocket.r_Fuels[fuel_list[fuel_index]],rocket.r_Oxidiser[oxidiser_list[oxidiser_index]])
 
     ###################### QUIT THE GAME HERE ##############################
-        
+
         if event.type == pygame.QUIT:
             running = False
 
@@ -82,13 +82,13 @@ while running:
     screen.fill((20, 20, 30))
 
     ################## MENU CODE HERE #########################
-         
 
- 
+
+
     # MENU code for running the menu
     if state == MENU:
         # init buttons "start" + "quit"
-        
+
         pygame.draw.rect(screen, (60, 120, 200), start_btn)
         pygame.draw.rect(screen, (200, 60, 60), quit_btn)
 
@@ -96,8 +96,8 @@ while running:
         screen.blit(font.render("QUIT", True, (255, 255, 255)), (370, 335))
         screen.blit(font.render("WACKY ROCKETS", True, (255, 255, 255)), (280, 150))
 
-   
-    
+
+
 
     #establish text variables again, same with the START and QUIT buttons
     # except it should display data from the RocketClass
@@ -105,7 +105,12 @@ while running:
         fuel_text = font.render(f"Fuel: {rocket.fuel1}", True, (255,255,255))
         oxidiser_test = font.render(f"Oxidiser: {rocket.oxidiser1}", True, (255,255,255))
 
-        
+        # same as above but for speed insted of fuel
+        speed_text = font.render(f"Speed: {abs(rocket.v_velocity):.2f} m/s", True, (255,255,255))
+        safe_speed_text = font.render("Safe landing: Less than 6m/s", True, (0,255,0))
+        # send to screen again but for speed UI now
+        screen.blit(speed_text, (WIDTH-speed_text.get_width() - 20,90))
+        screen.blit(safe_speed_text, (WIDTH-safe_speed_text.get_width() - 20,120))
 
         # send to screen and display from the width of the screen to a corner
         screen.blit(fuel_text, (WIDTH- fuel_text.get_width() - 20,20))
@@ -115,7 +120,7 @@ while running:
     ############## LEVEL DRAWING PARTS ##############################
 
     if state == GAME: # check for game state BEFORE loading level
-            
+
         #draw the gound
         pygame.draw.rect(screen, (50, 200, 50), (0, HEIGHT-50,WIDTH,50)) # green
 
@@ -134,15 +139,15 @@ while running:
 
         if rocket.alive:
             # gravity always applies
-            rocket.vertical_velocity = physics.apply_gravity(rocket.vertical_velocity, dt)
+            rocket.v_velocity = physics.apply_gravity(rocket.v_velocity, dt)
 
             # thrust when holding SPACE
             keys = pygame.key.get_pressed()
             if keys[pygame.K_SPACE]:
-                rocket.vertical_velocity = physics.apply_thrust(rocket.vertical_velocity, thrust_power=20, fuel_efficiency=rocket.fuelEfficiency, dt=dt)
+                rocket.v_velocity = physics.apply_thrust(rocket.v_velocity, 20, rocket.fuelEfficiency, dt)
 
             # update position
-            rocket.y -= rocket.vertical_velocity
+            rocket.y -= rocket.v_velocity
 
 
         # ground collision
@@ -152,8 +157,8 @@ while running:
             rocket.y = ground_y
 
             # landing check
-            if abs(rocket.vertical_velocity) <= 6: # abs to ensure 100% accuracy
-                rocket.vertical_velocity = 0
+            if abs(rocket.v_velocity) <= 6: # abs to ensure 100% accuracy
+                rocket.v_velocity = 0
             else:
                 rocket.alive = False # rocket will die in this case, game loss
 
@@ -162,13 +167,11 @@ while running:
             rocket_x = WIDTH // 2
             pygame.draw.rect(screen,(200, 50, 50),(rocket_x - 10, rocket.y - 30, 20, 30))
 
-            
-        
-        
+
+
+
     pygame.display.flip()
 
-    
+
 pygame.quit()
 sys.exit()
-
-

@@ -46,13 +46,13 @@ class RocketClass:
         # rocket stats
         self.mass = 1000
         self.velocity = 0
-        self.y = 0
-        self.v_velocity = 0
+        self.y = 0.0
+        self.v_velocity = 0.0
 
         # rocket state
         self.alive = True # has rocket crashed or not?
 
-    
+
     # METHODS FOR FUEL SWITCHING
     # SETTING FUEL AND OXIDISER
     # UPDATING THE FUEL CHANGE
@@ -70,4 +70,3 @@ class RocketClass:
         f_eff = self.r_Fuels[self.fuel1]
         o_eff = self.r_Oxidiser[self.oxidiser1]
         self.fuelEfficiency = self.physics.calculate_fuelEfficiency(f_eff, o_eff)
-        
