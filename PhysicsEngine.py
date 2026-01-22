@@ -1,7 +1,9 @@
 import math
 
+
 class PhysicsEngine:
     """Earth variables"""
+
     e_gravityConstant = 9.8
     e_baseAirResistance = 0
 
@@ -10,8 +12,7 @@ class PhysicsEngine:
     e_rocketMass = 0
     e_rocketVelocity = 0
 
-    e_tickrate = 60 # 60 fps baseline
-
+    e_tickrate = 60  # 60 fps baseline
 
     # GENERIC METHODS
 
@@ -23,32 +24,25 @@ class PhysicsEngine:
 
     def calculate_fuelEfficiency(self, fuel1_eff, oxidiser_eff):
         fuelMix = fuel1_eff * oxidiser_eff
-        final = max(0, min(fuelMix,1))
+        final = max(0, min(fuelMix, 1))
         return final
-
 
     # ROCKET MOVING METHODS
     def apply_gravity(self, velocity, dt):
-        #gravity always should pull down
-        #dt = delta time, personal note
+        # gravity always should pull down
+        # dt = delta time, personal note
         velocity -= self.e_gravityConstant * dt
         return velocity
 
-
     # new method for thrust in different directions
-    def apply_thrust_vector(self, vx, vy, thrust_power, fuelEfficiency, angle_radians, dt):
-        thrust_vx = math.sin(angle_radians) * thrust_power * fuelEfficiency * dt
+    def apply_thrust_vector(self, thrust_power, fuelEfficiency, angle_radians, dt):
+        thrust_vx = -math.sin(angle_radians) * thrust_power * fuelEfficiency * dt
         thrust_vy = -math.cos(angle_radians) * thrust_power * fuelEfficiency * dt
         return thrust_vx, thrust_vy
 
-
     # old method for thrust horizontally
     def apply_thrust(self, velocity, thrust_power, fuel_efficiency, dt):
-        #thrust makes rocket go up
+        # thrust makes rocket go up
         thrust = thrust_power * fuel_efficiency
         velocity += thrust * dt
         return velocity
-
-    
-
-    
