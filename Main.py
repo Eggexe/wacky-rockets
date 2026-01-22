@@ -1,5 +1,7 @@
 import pygame
 import sys
+import os
+import math
 from RocketClass import RocketClass
 from PhysicsEngine import PhysicsEngine
 
@@ -13,6 +15,13 @@ pygame.display.set_caption("Wacky Rockets")
 clock = pygame.time.Clock()
 font = pygame.font.Font(None, 36)
 
+# load rocket sprite
+ROCKET_PNG_LOCATION = os.path.dirname(os.path.abspath(__file__)) # get the file path for the rocket png from this file
+rocket_image = pygame.image.load(os.path.join(ROCKET_PNG_LOCATION, "rocket.png")).convert_alpha() # import the rocket image
+rocket_image = pygame.transform.scale(rocket_image, (50,50)) # scale it to size
+rocket_rect = rocket_image.get_rect() # pygame draws this section
+
+
 
 # game states - prevents weird logic from occuring
 # e.g. game running while in a menu
@@ -20,6 +29,7 @@ MENU = "menu"
 GAME = "game"
 state = MENU
 angle_of_rotation = 0 # this is the value for rotating rocket
+ROTATION_SPEED = 10 # how fast to rotate rps
 
 # making objects, NTPF and Fl2 used as testing fuels for proof of concept
 rocket = RocketClass("NTPF", "Flourine")
@@ -72,14 +82,25 @@ while running:
         # range of the key press will influence the direction the rocket turns
         # moved to gamestates     
 
-        if state == GAME and event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_q: # rotation adds 
-                angle_of_rotation += 1
-                print(angle_of_rotation)
+        if state == GAME:
+            keys = pygame.key.get_pressed() #check all pressed keys
+            if keys[pygame.K_q]: # same as before but checks for continuous key hold
+                angle_of_rotation += ROTATION_SPEED
 
-            if event.key == pygame.K_e: # rotation subs
-                angle_of_rotation -= 1
-                print(angle_of_rotation)
+            if keys[pygame.K_e]: # copy of above but checks for E and subtracts
+                angle_of_rotation -= ROTATION_SPEED
+
+            angle_of_rotation %= 360
+
+
+            # convert angle of rotation to radians
+            # cosine and sine needed to convert it from a 0 to 360 degree format
+            # to a 0 to 2pi format which maths prefers apparently
+
+            # example: 90 radians is apparently 5156.62 degrees which is very wrong
+        rad = math.radians(angle_of_rotation - 90) #90 degree offset to fix pygame angle issue
+        direction_x = math.cos(rad)
+        direction_y = -math.sin(rad)
 
 
 
@@ -179,10 +200,23 @@ while running:
             else:
                 rocket.alive = False # rocket will die in this case, game loss
 
-        # check if the rocket is alive and then draw it, rather than redrawing it over and over
+        # check if the rocket is alive and then draw it, rather than redrawing it over and ove
+        # INCLUDING THE NEW ROCKET IMAGE
         if rocket.alive:
             rocket_x = WIDTH // 2
-            pygame.draw.rect(screen,(200, 50, 50),(rocket_x - 10, rocket.y - 30, 20, 30))
+            rotated_rocket = pygame.transform.rotate(rocket_image, angle_of_rotation) # rotates rocket and image
+            rocket_rect = rotated_rocket.get_rect(center=(rocket_x,rocket.y-15)) # centre the rocket
+            screen.blit(rotated_rocket,rocket_rect) # draw the rocket on screen
+
+            rocket_y_centre = int(rocket.y-15) # cast from rockets scentre
+
+            line_length = 50 # how long the raycast will be
+            # end points of the line
+            end_x = rocket_x + direction_x * line_length 
+            end_y = rocket_y_centre + direction_y * line_length
+            #draw it
+            pygame.draw.line(screen, (255,0,0), (rocket_x,rocket_y_centre), (end_x, end_y), 3)
+            
 
 
 
