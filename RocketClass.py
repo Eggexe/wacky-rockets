@@ -46,7 +46,10 @@ class RocketClass:
         # rocket stats
         self.mass = 1000
         self.velocity = 0
-        self.y = 0.0
+        self.y = 650.0
+        self.x = 400.0
+        self.vx = 0.0
+        self.vy = 0.0
         self.v_velocity = 0.0
 
         # rocket state

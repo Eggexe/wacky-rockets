@@ -34,10 +34,21 @@ class PhysicsEngine:
         velocity -= self.e_gravityConstant * dt
         return velocity
 
+
+    # new method for thrust in different directions
+    def apply_thrust_vector(self, vx, vy, thrust_power, fuelEfficiency, angle_radians, dt):
+        vx += math.cos(angle_radians) * thrust_power * fuelEfficiency * dt
+        vy -= math.sin(angle_radians) * thrust_power * fuelEfficiency * dt
+        return vx, vy
+
+
+    # old method for thrust horizontally
     def apply_thrust(self, velocity, thrust_power, fuel_efficiency, dt):
         #thrust makes rocket go up
         thrust = thrust_power * fuel_efficiency
         velocity += thrust * dt
         return velocity
+
+    
 
     

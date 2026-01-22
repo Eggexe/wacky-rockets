@@ -16,7 +16,7 @@ clock = pygame.time.Clock()
 font = pygame.font.Font(None, 36)
 
 # load rocket sprite
-ROCKET_PNG_LOCATION = os.path.dirname(os.path.abspath(__file__)) # get the file path for the rocket png from this file
+ROCKET_PNG_LOCATION = os.getcwd() # get the file path for the rocket png from this file
 rocket_image = pygame.image.load(os.path.join(ROCKET_PNG_LOCATION, "rocket.png")).convert_alpha() # import the rocket image
 rocket_image = pygame.transform.scale(rocket_image, (50,50)) # scale it to size
 rocket_rect = rocket_image.get_rect() # pygame draws this section
@@ -182,10 +182,18 @@ while running:
             # thrust when holding SPACE
             keys = pygame.key.get_pressed()
             if keys[pygame.K_SPACE]:
-                rocket.v_velocity = physics.apply_thrust(rocket.v_velocity, 20, rocket.fuelEfficiency, dt)
+                rad = math.radians(angle_of_rotation) # convert rads again, ensure up to date info
+                thrust_vx, thrust_vy = physics.apply_thrust_vector(rocket.vx, rocket.vy, 20, rocket.fuelEfficiency, rad, dt)
+                rocket.vx += thrust_vx
+                rocket.vy += thrust_vy
 
-            # update position
-            rocket.y -= rocket.v_velocity
+
+            # apply gravity every frame, smoothed by delta time
+            rocket.vy += physics.e_gravityConstant * dt
+
+            #update the position of rockets
+            rocket.x += rocket.vx
+            rocket.y += rocket.vy
 
 
         # ground collision
@@ -195,8 +203,9 @@ while running:
             rocket.y = ground_y
 
             # landing check
-            if abs(rocket.v_velocity) <= 6: # abs to ensure 100% accuracy
-                rocket.v_velocity = 0
+            if abs(rocket.vy) <= 6: # abs to ensure 100% accuracy
+                rocket.vx = 0.0
+                rocket.vy = 0.0
             else:
                 rocket.alive = False # rocket will die in this case, game loss
 
@@ -205,7 +214,7 @@ while running:
         if rocket.alive:
             rocket_x = WIDTH // 2
             rotated_rocket = pygame.transform.rotate(rocket_image, angle_of_rotation) # rotates rocket and image
-            rocket_rect = rotated_rocket.get_rect(center=(rocket_x,rocket.y-15)) # centre the rocket
+            rocket_rect = rotated_rocket.get_rect(center=(rocket.x,rocket.y-15)) # centre the rocket
             screen.blit(rotated_rocket,rocket_rect) # draw the rocket on screen
 
             rocket_y_centre = int(rocket.y-15) # cast from rockets scentre
