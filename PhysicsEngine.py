@@ -37,9 +37,9 @@ class PhysicsEngine:
 
     # new method for thrust in different directions
     def apply_thrust_vector(self, vx, vy, thrust_power, fuelEfficiency, angle_radians, dt):
-        vx += math.cos(angle_radians) * thrust_power * fuelEfficiency * dt
-        vy -= math.sin(angle_radians) * thrust_power * fuelEfficiency * dt
-        return vx, vy
+        thrust_vx = math.sin(angle_radians) * thrust_power * fuelEfficiency * dt
+        thrust_vy = -math.cos(angle_radians) * thrust_power * fuelEfficiency * dt
+        return thrust_vx, thrust_vy
 
 
     # old method for thrust horizontally
