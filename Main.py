@@ -19,6 +19,7 @@ font = pygame.font.Font(None, 36)
 MENU = "menu"
 GAME = "game"
 state = MENU
+angle_of_rotation = 0 # this is the value for rotating rocket
 
 # making objects, NTPF and Fl2 used as testing fuels for proof of concept
 rocket = RocketClass("NTPF", "Flourine")
@@ -56,17 +57,32 @@ while running:
             if event.key == pygame.K_k:
                 oxidiser_index = (oxidiser_index + 1) % len(oxidiser_list) # ^^^
                 rocket.set_oxidiser(oxidiser_list[oxidiser_index])
-        print(oxidiser_index)
-        print(rocket.fuel1)
-        print(rocket.oxidiser1)
-        print(physics.calculate_fuelEfficiency(rocket.r_Fuels[fuel_list[fuel_index]],rocket.r_Oxidiser[oxidiser_list[oxidiser_index]]))
-
+        
 
     ###################### GAME CODE HEERE ###############################
 
         if state == GAME and event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
+                print("space key pressed, rocket should move")
                 rocket.velocity = 100 * rocket.mass * physics.calculate_fuelEfficiency(rocket.r_Fuels[fuel_list[fuel_index]],rocket.r_Oxidiser[oxidiser_list[oxidiser_index]])
+
+        # rocket rotation implementation
+        # set basic value from a range
+        # pressing 1 key increases slowly, pressing other key decreases slowly
+        # range of the key press will influence the direction the rocket turns
+        # moved to gamestates     
+
+        if state == GAME and event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_q: # rotation adds 
+                angle_of_rotation += 1
+                print(angle_of_rotation)
+
+            if event.key == pygame.K_e: # rotation subs
+                angle_of_rotation -= 1
+                print(angle_of_rotation)
+
+
+
 
     ###################### QUIT THE GAME HERE ##############################
 
@@ -136,7 +152,8 @@ while running:
             #draw a fancy polygon for the leaf
             pygame.draw.polygon(screen, (0, 150, 0), [(i -15, HEIGHT -80), (i +35, HEIGHT -80),(i +10, HEIGHT -120)])
 
-
+    ##################### PHYSICS SECTION ###############################
+            
         if rocket.alive:
             # gravity always applies
             rocket.v_velocity = physics.apply_gravity(rocket.v_velocity, dt)
